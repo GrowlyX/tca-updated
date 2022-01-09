@@ -1,0 +1,43 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+group 'net.minecrell.terminalconsole'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.apache.logging.log4j:log4j-core:2.17.0"
+    implementation "org.jline:jline-reader:3.20.0"
+
+    annotationProcessor "org.apache.logging.log4j:log4j-core:2.17.0"
+}
+
+test {
+    useJUnitPlatform()
+}
+
+shadowJar {
+    archiveClassifier.set("")
+
+    exclude "**/*.kotlin_metadata"
+    exclude "**/*.kotlin_builtins"
+    exclude "META-INF/"
+
+    archiveFileName = "TerminalConsoleAppender.jar"
+}
+
+publishing {
+    publications {
+        shadow(MavenPublication) { publication ->
+            project.shadow.component(publication)
+        }
+    }
+}
+
+tasks.build.dependsOn(shadowJar)
